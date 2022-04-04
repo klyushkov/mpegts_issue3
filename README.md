@@ -17,7 +17,6 @@ erl -make
 Файл не читается:
 ```
 3> element(3, mpegts_reader:read_file("test/bad.ts")).
-mpegts_psi:168 {invalid_psi,0,{invalid_crc32,915464765,456234502},8,175}
 []
 ```
 
