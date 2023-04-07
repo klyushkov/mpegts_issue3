@@ -261,7 +261,7 @@ decode_ts(<<_:3, _Pid:13, Scrambling:2, _:6, _/binary>>, Decoder) when Scramblin
 
 
 decode_ts(<<_Error:1, PayloadStart:1, _TransportPriority:1, Pid:13, _Scrambling:2,
-            _HasAdaptation:1, _HasPayload:1, _Counter:4, _TSRest/binary>> = Packet, #decoder{pids = Pids} = Decoder) ->
+            _HasAdaptation:1, _HasPayload:1, _Counter:4, _TSRest/binary>> = Packet, #decoder{pids = Pids, dump_psi = DumpPSI} = Decoder) ->
   PCR = get_pcr(Packet),
   Payload = ts_payload(Packet),
   % Keyframe = case {HasAdaptation, TSRest} of
@@ -321,7 +321,11 @@ decode_ts(<<_Error:1, PayloadStart:1, _TransportPriority:1, Pid:13, _Scrambling:
     % This clause happens when continuation packets comes to initialized decoder
     {value, #stream{ts_buffer = Buf} = Stream, Streams} when PayloadStart == 0 andalso is_binary(Buf) ->
       {ok, Decoder#decoder{pids = [Stream#stream{pcr = PCR, ts_buffer = <<Buf/binary, Payload/binary>>}|Streams]}, undefined};
-
+    
+    false when DumpPSI == [] ->
+        Stream = #stream{handler = psi, pid = Pid},
+        DecoderNew = insert_pid(Stream, Decoder),
+        decode_ts(Packet, DecoderNew);
     false ->
       % ?D({unknown_pid, Pid}),
       {ok, Decoder, undefined}
