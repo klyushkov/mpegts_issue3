@@ -323,9 +323,14 @@ decode_ts(<<_Error:1, PayloadStart:1, _TransportPriority:1, Pid:13, _Scrambling:
       {ok, Decoder#decoder{pids = [Stream#stream{pcr = PCR, ts_buffer = <<Buf/binary, Payload/binary>>}|Streams]}, undefined};
     
     false when DumpPSI == [] ->
-        Stream = #stream{handler = psi, pid = Pid},
-        DecoderNew = insert_pid(Stream, Decoder),
-        decode_ts(Packet, DecoderNew);
+        case mpegts_psi:psi(Payload) of
+            {Handler, _} when Handler == cat orelse Handler == pat orelse Handler == pmt ->
+                Stream = #stream{handler = psi, pid = Pid},
+                DecoderNew = insert_pid(Stream, Decoder),
+                decode_ts(Packet, DecoderNew);
+            _Other ->
+              {ok, Decoder, undefined}
+        end;
     false ->
       % ?D({unknown_pid, Pid}),
       {ok, Decoder, undefined}
