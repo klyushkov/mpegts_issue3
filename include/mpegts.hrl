@@ -16,6 +16,7 @@
 -define(EIT_PID, 18). % EPG
 -define(RST_PID, 19).
 -define(TDT_PID, 20). % TOT here
+-define(SPECIAL_PID, 4095).
 
 -define(MPEGTS_STREAMID_MPEG2, 2).
 -define(MPEGTS_STREAMID_MPGA1, 3).
