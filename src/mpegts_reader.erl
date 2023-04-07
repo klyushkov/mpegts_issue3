@@ -130,7 +130,8 @@ init([Options]) ->
     #stream{handler = psi, pid = ?SDT_PID},
     #stream{handler = psi, pid = ?EIT_PID},
     #stream{handler = psi, pid = ?RST_PID},
-    #stream{handler = psi, pid = ?TDT_PID}
+    #stream{handler = psi, pid = ?TDT_PID},
+    #stream{handler = psi, pid = ?SPECIAL_PID}
   ], dump_psi = DumpPSI}}.
 
 
